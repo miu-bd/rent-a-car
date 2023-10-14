@@ -1,0 +1,76 @@
+<div layout:decorate="~{index}" layout:fragment="content">
+    <h1 class="mt-4">Create Car</h1>
+    <p class="lead">Issue new cars</p>
+    <hr>
+
+    <div th:switch="${#lists.size(stations)}">
+        <p th:case="0">There are no stations.</p>
+        <form action="/admin/create-car/process" method="post" th:case="*" th:object="${car}">
+
+            <div class="form-group row">
+                <label class="col-sm-2" for="station">Rental station</label>
+                <div class="col-sm-10">
+                    <select class="form-control form-control-sm" id="station"
+                            onchange="this.form.action='/admin/create-car/refresh'; this.form.submit()"
+                            th:field="*{rentalStation}">
+                        <option th:each="station : ${stations}" th:text="${station.city}"
+                                th:value="${station.id}"></option>
+                    </select>
+                    <small class="text-danger" th:errors="*{station}"
+                           th:if="${#fields.hasErrors('station')}"></small>
+                </div>
+            </div>
+
+            <div th:case="*">
+
+                <div class="form-group row">
+                    <label class="col-sm-2" for="registrationNr">Registration</label>
+                    <div class="col-md-10">
+                        <input class="form-control form-control-sm" id="registrationNr" th:field="*{registrationNr}"
+                               type="text">
+                        <small class="text-danger" th:errors="*{registrationNr}"
+                               th:if="${#fields.hasErrors('registrationNr')}"></small>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2" for="constructionYear">Year</label>
+                    <div class="col-md-10">
+                        <input class="form-control form-control-sm" id="constructionYear" th:field="*{constructionYear}"
+                               type="text">
+                        <small class="text-danger" th:errors="*{constructionYear}"
+                               th:if="${#fields.hasErrors('constructionYear')}"></small>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2" for="mileage">Mileage</label>
+                    <div class="col-md-10">
+                        <input class="form-control form-control-sm" id="mileage" th:field="*{mileage}"
+                               type="text">
+                        <small class="text-danger" th:errors="*{mileage}"
+                               th:if="${#fields.hasErrors('mileage')}"></small>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-sm-2" for="model">Model</label>
+                    <div class="col-md-10">
+                        <input class="form-control form-control-sm" id="model" th:field="*{model}"
+                               type="text">
+                        <small class="text-danger" th:errors="*{model}"
+                               th:if="${#fields.hasErrors('model')}"></small>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="form-group row">
+                    <label class="col-sm-2"></label>
+                    <div class="col-md-10">
+                        <input class="btn btn-success" type="submit" value="Create">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
