@@ -1,5 +1,6 @@
 package com.miu.swe.controller;
 
+import com.miu.swe.bean.FinishRentalBean;
 import com.miu.swe.model.Car;
 import com.miu.swe.model.Customer;
 import com.miu.swe.model.Rental;
@@ -8,22 +9,25 @@ import com.miu.swe.service.CarService;
 import com.miu.swe.service.CustomerService;
 import com.miu.swe.service.RentalService;
 import com.miu.swe.service.StationService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.miu.swe.util.MessagesBean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.ModelAndView;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.net.URI;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@RestController
+@Controller
 @RequestMapping("admin")
 public class AdminController {
 
+    private MessagesBean messages;
     private CarService carService;
     private CustomerService customerService;
     private RentalService rentalService;
@@ -32,7 +36,8 @@ public class AdminController {
 
 
 
-    public AdminController(CarService carService, CustomerService customerService, RentalService rentalService, StationService stationService) {
+    public AdminController(MessagesBean messages, CarService carService, CustomerService customerService, RentalService rentalService, StationService stationService) {
+        this.messages = messages;
         this.carService = carService;
         this.customerService = customerService;
         this.rentalService = rentalService;
@@ -46,35 +51,86 @@ public class AdminController {
         return "fragments/create-car";
     }
 
-    @PostMapping("/create-car/refresh")
-    public String refreshCreateCarForm(@ModelAttribute("rental") Car car, RedirectAttributes redirectAttributes) {
-        redirectAttributes.addFlashAttribute("car", car);
-        return "redirect:/admin/create-car";
+
+    @PostMapping("/create-car/process")
+    public ModelAndView processCreateCarForm(@Valid @ModelAttribute("car") Car car, BindingResult bindingResult) {
+
+        ModelAndView createForm = new ModelAndView("fragments/create-car");
+        List<Station> stations = stationService.findAll();
+        createForm.addObject("stations", stations);
+
+        if (bindingResult.hasErrors()) {
+            return createForm;
+        }
+
+        carService.create(car);
+        return new ModelAndView("redirect:/admin/all-cars")
+                .addObject("success", messages.get("createCarSuccess"));
     }
 
-    @GetMapping("running-rentals")
-    public List<Rental> findRunningRentals() {
-        return rentalService.findRunningRentals();
+    @GetMapping("/all-cars")
+    public String showAllCarsForm(Model model, @ModelAttribute("error") String error, @ModelAttribute("success") String success) {
+        model.addAttribute("cars", carService.findAll());
+        model.addAttribute("error", error);
+        model.addAttribute("success", success);
+        return "fragments/all-cars";
     }
 
-    @GetMapping("mileage-greater-than/{mileage}")
-    public List<Car> findByMileageGreaterThan(@PathVariable Integer mileage) {
-        return carService.findByMileageGreaterThan(mileage);
+    @GetMapping("/create-customer")
+    public String showCreateCustomerForm(Model model, @ModelAttribute("customer") Customer customer) {
+        return "fragments/create-customer";
     }
 
-    @PostMapping("create-car/process")
-    public ResponseEntity<Car> createCar(@RequestBody @Valid Car car) {
-        return ResponseEntity.created(URI.create("")).body(carService.create(car));
+
+    @PostMapping("/create-customer/process")
+    public ModelAndView processCreateCustomerForm(@Valid @ModelAttribute("customer") Customer customer, BindingResult bindingResult) {
+
+        ModelAndView createForm = new ModelAndView("fragments/create-customer");
+
+        if (bindingResult.hasErrors()) {
+            return createForm;
+        }
+
+        customerService.create(customer);
+        return new ModelAndView("redirect:/admin/all-customers")
+                .addObject("success", messages.get("createCustomerSuccess"));
     }
 
-    @PostMapping("create-customer")
-    public ResponseEntity<Customer> createCustomer(@RequestBody @Valid Customer customer) {
-        return ResponseEntity.created(URI.create("")).body(customerService.create(customer));
+    @GetMapping("/all-customers")
+    public String showAllCustomerForm(Model model, @ModelAttribute("error") String error, @ModelAttribute("success") String success) {
+        model.addAttribute("customers", customerService.findAll());
+        model.addAttribute("error", error);
+        model.addAttribute("success", success);
+        return "fragments/all-customers";
     }
 
-    @DeleteMapping("delete-car/{registrationNr}")
-    public void deleteCar(@PathVariable String registrationNr) {
-        carService.deleteById(registrationNr);
+    @GetMapping("/delete-car/{id}")
+    public ModelAndView showDeleteCarForm(@PathVariable("id") String id) {
+
+        try {
+            carService.deleteById(id);
+        }catch (EntityNotFoundException exception){
+            return new ModelAndView("redirect:/admin/all-cars")
+                    .addObject("error", messages.get("deleteCarFailed"));
+        }
+
+        return new ModelAndView("redirect:/admin/all-cars")
+                .addObject("success", messages.get("deleteCarSuccess"));
     }
+
+    @GetMapping("/delete-customer/{id}")
+    public ModelAndView showDeleteCustomerForm(@PathVariable("id") Integer id) {
+
+        try {
+            customerService.deleteById(id);
+        }catch (EntityNotFoundException exception){
+            return new ModelAndView("redirect:/admin/all-customers")
+                    .addObject("error", messages.get("deleteCustomerFailed"));
+        }
+
+        return new ModelAndView("redirect:/admin/all-customers")
+                .addObject("success", messages.get("deleteCustomerSuccess"));
+    }
+
 
 }

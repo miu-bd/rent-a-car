@@ -14,5 +14,23 @@
                 Running rentals
             </a>
         </div>
+        <div th:if="${#request.isUserInRole('ADMIN')}">
+            <a class="list-group-item list-group-item-action bg-light"
+               href="/admin/create-car">
+                Create Car
+            </a>
+            <a class="list-group-item list-group-item-action bg-light"
+               href="/admin/all-cars">
+                All Cars
+            </a>
+            <a class="list-group-item list-group-item-action bg-light"
+               href="/admin/create-customer">
+                Create Customer
+            </a>
+            <a class="list-group-item list-group-item-action bg-light"
+               href="/admin/all-customers">
+                All Customers
+            </a>
+        </div>
     </div>
 </div>

@@ -20,7 +20,7 @@ import java.io.Serializable;
 public class Car implements Serializable {
 
     @Id
-    @NotBlank(message = "{notBlank}")
+    @NotNull(message = "{notNull}")
     @EqualsAndHashCode.Include
     private String registrationNr;
 
@@ -32,7 +32,7 @@ public class Car implements Serializable {
     @Min(value = 0, message = "{mileageError}")
     private Integer mileage;
 
-    @NotBlank(message = "{notBlank}")
+    @NotNull(message = "{notNull}")
     private String model;
 
     @ManyToOne

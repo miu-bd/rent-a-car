@@ -25,6 +25,10 @@ public class CarService {
         this.stationService = stationService;
     }
 
+    public List<Car> findAll() {
+        return carRepository.findAll();
+    }
+
     public List<Car> findByStation(Station station) {
         return carRepository.findByStation(station);
     }

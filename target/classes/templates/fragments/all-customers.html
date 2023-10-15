@@ -1,0 +1,48 @@
+<div layout:decorate="~{index}" layout:fragment="content">
+    <h1 class="mt-4">All Customers</h1>
+    <p class="lead">List of currently available customers</p>
+    <hr>
+
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${!error.isBlank()}">
+        <span th:text="${error}"></span>
+        <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${!success.isBlank()}">
+        <span th:text="${success}"></span>
+        <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div th:if="${customers != null}">
+        <hr>
+        <div th:switch="${customersListSize}" th:with="customersListSize=${#lists.size(customers)}">
+            <p class="text-center info" th:case="0">0 customers found.<br>There are no customers available.</p>
+            <div th:case="*">
+                <table class="table table-borderless table-hover table-sm">
+                    <caption class="text-center info"
+                             th:text="${customersListSize + (customersListSize == 1 ? ' customer' : ' customers') + ' found'}"></caption>
+                    <thead>
+                    <tr>
+                        <th>Customer Number</th>
+                        <th>Last Name</th>
+                        <th>First Name</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="customer : ${customers}">
+                        <td th:text="${customer.customerNumber}"></td>
+                        <td th:text="${customer.lastName}"></td>
+                        <td th:text="${customer.firstName}"></td>
+                        <td><a class="btn btn-warning btn-sm" th:href="@{'delete-customer/' + ${customer.customerNumber}}">Delete</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

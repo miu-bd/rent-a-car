@@ -1,0 +1,52 @@
+<div layout:decorate="~{index}" layout:fragment="content">
+    <h1 class="mt-4">All Cars</h1>
+    <p class="lead">List of currently available cars</p>
+    <hr>
+
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${!error.isBlank()}">
+        <span th:text="${error}"></span>
+        <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${!success.isBlank()}">
+        <span th:text="${success}"></span>
+        <button aria-label="Close" class="close" data-dismiss="alert" type="button">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div th:if="${cars != null}">
+        <hr>
+        <div th:switch="${carsListSize}" th:with="carsListSize=${#lists.size(cars)}">
+            <p class="text-center info" th:case="0">0 cars found.<br>There are no cars available.</p>
+            <div th:case="*">
+                <table class="table table-borderless table-hover table-sm">
+                    <caption class="text-center info"
+                             th:text="${carsListSize + (carsListSize == 1 ? ' car' : ' cars') + ' found'}"></caption>
+                    <thead>
+                    <tr>
+                        <th>Registration Number</th>
+                        <th>Construction Year</th>
+                        <th>Mileage (km)</th>
+                        <th>Model</th>
+                        <th>Station</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="car : ${cars}">
+                        <td th:text="${car.registrationNr}"></td>
+                        <td th:text="${car.constructionYear}"></td>
+                        <td th:text="${#numbers.formatDecimal(car.mileage, 0, 'POINT', 0, 'POINT')}"></td>
+                        <td th:text="${car.model}"></td>
+                        <td th:text="${car.station?.city}"></td>
+                        <td><a class="btn btn-warning btn-sm" th:href="@{'delete-car/' + ${car.registrationNr}}">Delete</a></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

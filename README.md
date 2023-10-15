@@ -12,6 +12,13 @@
 * H2 in memory database
 * JPA ORM (Hibernate impl.)
 
+## Team members
+
+- Tanvir Zobair Mahboob (615163)
+- Md Siam Biswas (615195) 
+- Md Atikur Rahman (615231)
+- Md Shahab Uddin (615180)
+
 ## Installation
 
 - Run The "RentACarApplication"
