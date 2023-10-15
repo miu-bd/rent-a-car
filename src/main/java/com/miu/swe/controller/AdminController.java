@@ -1,16 +1,13 @@
 package com.miu.swe.controller;
 
-import com.miu.swe.bean.FinishRentalBean;
 import com.miu.swe.model.Car;
 import com.miu.swe.model.Customer;
-import com.miu.swe.model.Rental;
 import com.miu.swe.model.Station;
 import com.miu.swe.service.CarService;
 import com.miu.swe.service.CustomerService;
 import com.miu.swe.service.RentalService;
 import com.miu.swe.service.StationService;
 import com.miu.swe.util.MessagesBean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,9 +16,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
-import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("admin")
@@ -31,7 +26,6 @@ public class AdminController {
     private CarService carService;
     private CustomerService customerService;
     private RentalService rentalService;
-
     private StationService stationService;
 
 
@@ -109,9 +103,9 @@ public class AdminController {
 
         try {
             carService.deleteById(id);
-        }catch (EntityNotFoundException exception){
+        } catch (Exception e) {
             return new ModelAndView("redirect:/admin/all-cars")
-                    .addObject("error", messages.get("deleteCarFailed"));
+                    .addObject("error", messages.get("carDeleteError"));
         }
 
         return new ModelAndView("redirect:/admin/all-cars")
@@ -123,13 +117,35 @@ public class AdminController {
 
         try {
             customerService.deleteById(id);
-        }catch (EntityNotFoundException exception){
+        }catch (Exception ex){
             return new ModelAndView("redirect:/admin/all-customers")
-                    .addObject("error", messages.get("deleteCustomerFailed"));
+                    .addObject("error", messages.get("customerDeleteError"));
         }
 
         return new ModelAndView("redirect:/admin/all-customers")
                 .addObject("success", messages.get("deleteCustomerSuccess"));
+    }
+
+    @GetMapping("/all-rentals")
+    public String showAllRentalsForm(Model model, @ModelAttribute("error") String error, @ModelAttribute("success") String success) {
+        model.addAttribute("rentals", rentalService.findAllRentals());
+        model.addAttribute("error", error);
+        model.addAttribute("success", success);
+        return "fragments/all-rentals";
+    }
+
+    @GetMapping("/delete-rental/{id}")
+    public ModelAndView showDeleteRentalForm(@PathVariable("id") Integer id) {
+
+        try {
+            rentalService.deleteById(id);
+        }catch (Exception ex){
+            return new ModelAndView("redirect:/admin/all-rentals")
+                    .addObject("error", messages.get("rentalDeleteError"));
+        }
+
+        return new ModelAndView("redirect:/admin/all-rentals")
+                .addObject("success", messages.get("deleteRentalSuccess"));
     }
 
 

@@ -2,7 +2,6 @@ package com.miu.swe.service;
 
 import com.miu.swe.model.Station;
 import com.miu.swe.repository.StationRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

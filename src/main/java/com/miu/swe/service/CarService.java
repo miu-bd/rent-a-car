@@ -3,8 +3,8 @@ package com.miu.swe.service;
 import com.miu.swe.model.Car;
 import com.miu.swe.model.Station;
 import com.miu.swe.repository.CarRepository;
+import com.miu.swe.repository.RentalRepository;
 import com.miu.swe.util.MessagesBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -17,12 +17,14 @@ public class CarService {
     private MessagesBean messages;
     private CarRepository carRepository;
     private StationService stationService;
+    private RentalRepository rentalRepository;
 
 
-    public CarService(MessagesBean messages, CarRepository carRepository, StationService stationService) {
+    public CarService(MessagesBean messages, CarRepository carRepository, StationService stationService, RentalRepository rentalRepository) {
         this.messages = messages;
         this.carRepository = carRepository;
         this.stationService = stationService;
+        this.rentalRepository = rentalRepository;
     }
 
     public List<Car> findAll() {
@@ -50,7 +52,7 @@ public class CarService {
         return carRepository.save(car);
     }
 
-    public void deleteById(String registrationNr) {
+    public void deleteById(String registrationNr) throws Exception{
         Car car = carRepository.findById(registrationNr)
                 .orElseThrow(() -> new EntityNotFoundException(messages.get("carNotFound")));
         if (!canDelete(car)) {
@@ -60,7 +62,7 @@ public class CarService {
     }
 
     public boolean canDelete(Car car) {
-        return car.getStation() != null;
+        return rentalRepository.findByCar(car).isEmpty();
     }
 
 }

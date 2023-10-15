@@ -9,13 +9,14 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.miu.swe</groupId>
-    <artifactId>car-rent</artifactId>
+    <artifactId>rent-a-car</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>rent-a-car</name>
     <description>Rent A Car management system</description>
 
     <properties>
         <java.version>11</java.version>
+        <start-class>com.miu.swe.RentACarApplication</start-class>
     </properties>
 
     <dependencies>
@@ -50,6 +51,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.28</version>
             <optional>true</optional>
         </dependency>
         <dependency>
@@ -80,6 +82,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <executable>true</executable>
+                </configuration>
             </plugin>
         </plugins>
     </build>

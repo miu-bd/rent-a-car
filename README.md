@@ -21,8 +21,10 @@
 
 ## Installation
 
-- Run The "RentACarApplication"
-- visit "http://localhost:8080/" with Web Browser
+- Download the project
+- open cmd/terminal in the project folder
+- execute the following command - "java -jar ./target/rent-a-car-0.0.1-SNAPSHOT.jar"
+- open a web browser and visit - "http://localhost:8080/"
 
 
 ## In memory users

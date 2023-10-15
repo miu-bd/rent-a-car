@@ -1,6 +1,7 @@
 package com.miu.swe.repository;
 
 import com.miu.swe.model.Car;
+import com.miu.swe.model.Customer;
 import com.miu.swe.model.Rental;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -15,5 +16,7 @@ public interface RentalRepository extends JpaRepository<Rental, Integer> {
     List<Rental> findRunningRentals();
 
     List<Rental> findByCar(Car car);
+
+    List<Rental> findByDriver(Customer driver);
 
 }

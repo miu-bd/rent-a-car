@@ -1,10 +1,11 @@
 package com.miu.swe.service;
 
+
 import com.miu.swe.model.Car;
 import com.miu.swe.model.Customer;
 import com.miu.swe.repository.CustomerRepository;
+import com.miu.swe.repository.RentalRepository;
 import com.miu.swe.util.MessagesBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
@@ -17,10 +18,12 @@ public class CustomerService {
 
     private MessagesBean messages;
     private CustomerRepository customerRepository;
+    private RentalRepository rentalRepository;
 
-    public CustomerService(MessagesBean messages, CustomerRepository customerRepository) {
+    public CustomerService(MessagesBean messages, CustomerRepository customerRepository,RentalRepository rentalRepository) {
         this.messages = messages;
         this.customerRepository = customerRepository;
+        this.rentalRepository = rentalRepository;
     }
 
     public List<Customer> findAll() {
@@ -38,9 +41,16 @@ public class CustomerService {
         return customerRepository.existsById(id);
     }
 
-    public void deleteById(Integer id) {
+    public void deleteById(Integer id) throws Exception{
         Customer customer = customerRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException(messages.get("customerNotFound")));
+        if (!canDelete(customer)) {
+            throw new IllegalArgumentException(messages.get("customerDeleteError"));
+        }
         customerRepository.delete(customer);
+    }
+
+    public boolean canDelete(Customer customer) {
+        return rentalRepository.findByDriver(customer).isEmpty();
     }
 }

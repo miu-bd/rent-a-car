@@ -4,9 +4,9 @@ import com.miu.swe.bean.FinishRentalBean;
 import com.miu.swe.model.Car;
 import com.miu.swe.model.Rental;
 import com.miu.swe.repository.RentalRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,6 +44,10 @@ public class RentalService {
         return rentalRepository.findRunningRentals();
     }
 
+    public List<Rental> findAllRentals() {
+        return rentalRepository.findAll();
+    }
+
     public List<Rental> findByCar(Car car) {
         return rentalRepository.findByCar(car);
     }
@@ -77,4 +81,11 @@ public class RentalService {
             return true;
         }
     }
+
+    public void deleteById(Integer id) throws Exception{
+        Rental rental = rentalRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException());
+        rentalRepository.delete(rental);
+    }
+
 }
